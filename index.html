@@ -592,52 +592,32 @@
       <button type="submit">Submit</button>
     </div>
   </div>
+<iframe name="hiddenFrame" style="display:none;"></iframe>
 
- 
 <script>
-document.getElementById('bioDataForm').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  const form = this;
-  const formData = new FormData(form);
+  const form = document.getElementById('bioDataForm');
 
-  // Append printable HTML version of the form
-  const htmlClone = form.cloneNode(true);
-  htmlClone.querySelectorAll('input, textarea, select').forEach(el => {
-    const span = document.createElement('span');
-    if (el.type === 'checkbox') {
-      span.textContent = el.checked ? '✔️' : '❌';
-    } else if (el.type === 'file') {
-      span.textContent = el.files.length > 0 ? el.files[0].name : 'No file';
-    } else {
-      span.textContent = el.value || '—';
-    }
-    el.parentNode.replaceChild(span, el);
+  // Configure form to submit via iframe to Apps Script
+  form.setAttribute("target", "hiddenFrame");
+  form.setAttribute("action", "https://script.google.com/macros/s/AKfycbyLpPOKB6oaPKdH6a_yZMoQcwX7bIUfao6YodBMwSVCxnVYXp1jS8Lhj_SOxb1xqCr2/exec");
+  form.setAttribute("method", "POST");
+  form.setAttribute("enctype", "multipart/form-data");
+
+  // Simple alert on submit
+  form.addEventListener('submit', function () {
+    alert("✅ Submitted! HR will be notified via email.");
   });
-  formData.append("formHtml", new XMLSerializer().serializeToString(htmlClone));
 
-  try {
-    const response = await fetch("https://script.google.com/macros/s/AKfycbyLpPOKB6oaPKdH6a_yZMoQcwX7bIUfao6YodBMwSVCxnVYXp1jS8Lhj_SOxb1xqCr2/exec", {
-      method: "POST",
-      body: formData
-    });
-
-    const text = await response.text();
-    alert(text);
-    if (text.startsWith("✅")) form.reset();
-  } catch (err) {
-    alert("❌ Failed to submit: " + err.message);
-    console.error(err);
+  // ➕ Add More Experience Rows
+  function addExperience() {
+    const container = document.getElementById("experience-section");
+    const firstEntry = container.querySelector(".experience-entry");
+    const newEntry = firstEntry.cloneNode(true);
+    newEntry.querySelectorAll("input, textarea").forEach(el => el.value = "");
+    container.appendChild(newEntry);
   }
-});
-// ➕ Add More Experience Rows
-function addExperience() {
-  const container = document.getElementById("experience-section");
-  const firstEntry = container.querySelector(".experience-entry");
-  const newEntry = firstEntry.cloneNode(true);
-  newEntry.querySelectorAll("input, textarea").forEach(el => el.value = "");
-  container.appendChild(newEntry);
-}
 </script>
+
 
 
 
