@@ -597,37 +597,38 @@
 <script>
 document.getElementById('bioDataForm').addEventListener('submit', async function (e) {
   e.preventDefault();
+  const form = this;
+  const formData = new FormData(form);
+
+  // Append printable HTML version of the form
+  const htmlClone = form.cloneNode(true);
+  htmlClone.querySelectorAll('input, textarea, select').forEach(el => {
+    const span = document.createElement('span');
+    if (el.type === 'checkbox') {
+      span.textContent = el.checked ? '✔️' : '❌';
+    } else if (el.type === 'file') {
+      span.textContent = el.files.length > 0 ? el.files[0].name : 'No file';
+    } else {
+      span.textContent = el.value || '—';
+    }
+    el.parentNode.replaceChild(span, el);
+  });
+  formData.append("formHtml", new XMLSerializer().serializeToString(htmlClone));
 
   try {
-    const form = this;
-    const formData = new FormData(form);
-
-    // Append the full HTML content (for PDF)
-    const htmlClone = form.cloneNode(true);
-    htmlClone.querySelectorAll('input, textarea, select').forEach(el => {
-      const span = document.createElement('span');
-      span.textContent = el.value || '';
-      el.parentNode.replaceChild(span, el);
-    });
-    formData.append("formHtml", new XMLSerializer().serializeToString(htmlClone));
-
-    // 🔄 Send data to Google Apps Script
     const response = await fetch("https://script.google.com/macros/s/AKfycbyLpPOKB6oaPKdH6a_yZMoQcwX7bIUfao6YodBMwSVCxnVYXp1jS8Lhj_SOxb1xqCr2/exec", {
       method: "POST",
       body: formData
     });
 
-    if (!response.ok) throw new Error("❌ Network or Server error!");
-
     const text = await response.text();
     alert(text);
     if (text.startsWith("✅")) form.reset();
   } catch (err) {
-    console.error(err);
     alert("❌ Failed to submit: " + err.message);
+    console.error(err);
   }
 });
-
 // ➕ Add More Experience Rows
 function addExperience() {
   const container = document.getElementById("experience-section");
