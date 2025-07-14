@@ -612,7 +612,7 @@ document.getElementById('bioDataForm').addEventListener('submit', async function
     formData.append("formHtml", new XMLSerializer().serializeToString(htmlClone));
 
     // 🔄 Send data to Google Apps Script
-    const response = await fetch("https://script.google.com/macros/s/AKfycbxeljR6ws-bIsCgwvZpUK_JyW_k_cd8eiLB_zDgCs928OIxGvjw277wUfkZrPXWzh0K/exec", {
+    const response = await fetch("https://script.google.com/macros/s/AKfycbyLpPOKB6oaPKdH6a_yZMoQcwX7bIUfao6YodBMwSVCxnVYXp1jS8Lhj_SOxb1xqCr2/exec", {
       method: "POST",
       body: formData
     });
